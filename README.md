@@ -4,18 +4,44 @@
 
 This project is a full-stack **data engineering pipeline** designed to help businesses monitor and analyze competitor pricing trends. It collects product data from an e-commerce source, processes and stores it, and delivers actionable insights through an API and interactive dashboard.
 
-The system is built to simulate a real-world B2B use case where companies need **timely, structured, and reliable market data** to make pricing decisions.
+The system simulates a real-world B2B use case where companies rely on **timely, structured, and reliable market data** to make pricing decisions.
+
+---
+
+## ⚡ Quick Start
+
+Run the entire system using Docker:
+
+```bash
+docker-compose up --build
+```
+
+Then open:
+
+```
+http://localhost:5173
+```
 
 ---
 
 ## 🎯 Problem Statement
 
-Businesses often lack access to structured competitor pricing data. Without this, they cannot:
+Businesses often lack access to structured competitor pricing data. Without this, they struggle to:
+
 * Benchmark their product prices
-* Detect pricing trends
+* Identify pricing trends
 * Adjust strategies dynamically
 
-This project solves that problem by building an **automated data pipeline** that continuously collects, processes, and presents pricing data in a usable format.
+This project addresses that gap by building an **automated pipeline** that continuously collects, cleans, and delivers pricing data in a usable format.
+
+---
+
+## 💼 Business Impact
+
+* Enables businesses to monitor competitor pricing
+* Helps identify pricing trends over time
+* Supports data-driven pricing strategies
+* Provides structured market intelligence
 
 ---
 
@@ -26,6 +52,8 @@ Scraper → Data Cleaning → MongoDB → Backend API → Frontend Dashboard
                           ↓
                     ML Predictor (Optional)
 ```
+
+---
 
 ## ⚙️ Tech Stack
 
@@ -44,38 +72,74 @@ Scraper → Data Cleaning → MongoDB → Backend API → Frontend Dashboard
 ## 🔄 Pipeline Breakdown
 
 ### 1. Data Scraping
-- Scrapes product data from a public e-commerce source (`books.toscrape.com`).
-- Extracts: name, price, rating, availability, URL.
-- Handles pagination and HTTP failures.
-> ⚠️ **Note**: A sandbox site (`books.toscrape.com`) is used for reliability and to avoid Captcha/bot protection issues during demonstration. The architecture is modular and can be extended to real-world platforms.
+
+* Scrapes product data from a public e-commerce source (`books.toscrape.com`)
+* Extracts: name, price, rating, availability, URL
+* Handles pagination and HTTP failures
+
+> ⚠️ **Note:** A sandbox dataset (`books.toscrape.com`) is used for reliable demonstration and to avoid CAPTCHA restrictions. The system is designed to be easily extended to real-world platforms.
+
+---
 
 ### 2. Data Cleaning & Storage
-- Removes currency symbols and converts prices to numeric format.
-- Stores cleaned data in MongoDB.
-- Ensures **idempotency** to prevent duplicates using upsert logic.
-- Maintains a historical array of prices for trend analysis.
+
+* Converts prices to numeric format (removes currency symbols)
+* Handles missing/inconsistent data
+* Stores cleaned data in MongoDB
+* Ensures **idempotency** using upsert operations
+* Maintains historical price arrays for trend analysis
+
+---
 
 ### 3. Automation
-- Uses `node-cron` in the Node.js backend to execute the Python scraper and ML predictor scripts periodically (e.g., daily at midnight).
-- Logs execution status and errors.
+
+* Uses `node-cron` to schedule pipeline execution (e.g., daily)
+* Automatically runs scraper and ML predictor
+* Logs execution status and failures
+
+---
 
 ### 4. Backend API
+
 RESTful API built using Node.js and Express:
-- `GET /api/products` → List all products with optional filters (`search`, `minRating`).
-- `GET /api/products/:id` → Product details.
-- `GET /api/trends` → Aggregated market trend data.
+
+* `GET /api/products` → Fetch products (supports filters like search & rating)
+* `GET /api/products/:id` → Product details
+* `GET /api/trends` → Aggregated market insights
+
+Features:
+
+* Structured JSON responses
+* Error handling
+* Scalable design
+
+---
 
 ### 5. Frontend Dashboard
-A dynamic, beautiful React SPA that displays:
-- Product listings with premium dark-mode styling and glassmorphism.
-- Interactive price trend charts (using Recharts).
-- Data-driven rendering based on API data.
+
+A dynamic React application that provides:
+
+* Product listings with a premium dark UI
+* Interactive price charts (Recharts)
+* Search and filtering capabilities
+
+UI highlights:
+
+* Responsive and data-driven
+* Clean and modern design
+* Business-ready dashboard experience
+
+---
 
 ### 6. ML Component (Bonus)
-A lightweight Machine Learning model is used to estimate short-term price trends.
-- **Model**: Linear Regression (`scikit-learn`).
-- **Purpose**: Identify potential price movement based on historical data.
-- **Limitation**: Works on limited historical data; it is a simple enhancement to demonstrate how intelligence can be added to a data pipeline.
+
+A lightweight ML model estimates short-term price trends.
+
+* Model: Linear Regression
+* Purpose: Identify potential price movement
+* Limitation: Works on limited historical data
+
+> Due to limited historical data, current trends are based on minimal observations. The system improves as more data is collected over time.
 
 ---
 
@@ -83,43 +147,43 @@ A lightweight Machine Learning model is used to estimate short-term price trends
 
 ### Option 1: Docker (Recommended)
 
-Ensure Docker and Docker Compose are installed.
-
 ```bash
-# Clone repository
 git clone <repo-url>
 cd project
-
-# Build and start all services
 docker-compose up --build
 ```
-This will start MongoDB (Port 27017), Backend server (Port 5000), and Frontend app (Port 5173).
 
-Visit the dashboard at: `http://localhost:5173`
+Services:
+
+* MongoDB → `27017`
+* Backend → `5001`
+* Frontend → `5173`
+
+---
 
 ### Option 2: Local Setup
 
 #### Prerequisites:
-- Node.js
-- Python 3.10+
-- MongoDB (running locally on default port 27017)
+
+* Node.js
+* Python 3.10+
+* MongoDB
 
 #### Steps:
 
 ```bash
-# Setup scraper
+# Scraper
 cd scraper
 python -m venv venv
-source venv/bin/activate  # On Windows use: venv\Scripts\activate
+venv\Scripts\activate   # Windows
 pip install -r requirements.txt
 
-# Setup backend
+# Backend
 cd ../backend
 npm install
-# Create .env file with MONGO_URI and PORT
 npm start
 
-# Setup frontend
+# Frontend
 cd ../frontend
 npm install
 npm run dev
@@ -139,16 +203,37 @@ PORT=5001
 ---
 
 ## ⚖️ Trade-offs & Decisions
-- Used a **sandbox site** (`books.toscrape.com`) to ensure reliability and avoid scraping restrictions that complex platforms like Amazon enforce.
-- Chose **MongoDB** for flexible schema handling, allowing easy storage of price history arrays without complex joins.
-- Implemented **simple ML (Linear Regression)** due to limited data availability.
-- Used **Vanilla CSS** instead of Tailwind to provide a more tailored, premium UI design.
-- Prioritized **pipeline completeness over complexity**.
+
+* Used a **sandbox dataset** for reliability and faster development
+* Chose **MongoDB** for flexible schema and time-series storage
+* Implemented **simple ML model** due to limited data availability
+* Prioritized **end-to-end pipeline completeness over complexity**
+* Designed modular architecture for easy scalability
 
 ---
 
 ## 📈 Future Enhancements
-- Integrate real-world e-commerce APIs.
-- Add alert system for price drops.
-- Improve ML model with more historical data (e.g. ARIMA, LSTMs).
-- Add user authentication for business users.
+
+* Integrate real-world e-commerce APIs
+* Add real-time alerts for price drops
+* Improve ML models (ARIMA, LSTM)
+* Add user authentication and multi-tenant support
+
+---
+
+## 🧠 Key Takeaways
+
+This project demonstrates:
+
+* End-to-end data pipeline design
+* Real-world problem solving
+* Automation and reliability
+* Business-focused data engineering
+
+---
+
+## 📬 Conclusion
+
+The Competitor Price Tracking System showcases how raw web data can be transformed into meaningful business insights through a structured, automated, and scalable pipeline.
+
+---
