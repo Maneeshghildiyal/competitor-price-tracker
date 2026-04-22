@@ -133,7 +133,7 @@ Create `.env` file in the `backend/` folder:
 
 ```env
 MONGO_URI=mongodb://localhost:27017/price_tracker
-PORT=5000
+PORT=5001
 ```
 
 ---
